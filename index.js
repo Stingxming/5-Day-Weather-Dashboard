@@ -13,12 +13,26 @@ dayjs.extend(window.dayjs_plugin_timezone);
 function renderSearchHistory() {}
 
 // todo: function to add to search history and rerun renderSearchHistory
-
+function addSearchHistory(city, data) {}
 // todo: function to get search history and rerun renderSearchHistory
-
+function getSearchHistory(city, data) {}
 // todo: function to render the current weather
-
+function renderCurrentWeather(response) {}
 // todo: function to render the forecast
+function renderForecast(city) {
+  var apiKey = "844421298d794574c100e3409cee0499";
+  var apiURL = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=imperial&appid=${apiKey}`;
+
+  fetch(apiURL).then(function (response) {
+    response.json().then(function (data) {
+      console.log(data);
+      var historyEl = document.createElement("div");
+      todayContainer.append(historyEl);
+      historyEl.textContent = `date: ${data.list[0].}temperature: ${data.list[0].main.temp} humidity: ${data.list[0].main.humidity}, wind speed: ${data.list[0].wind.speed}`;
+      // return data;
+    });
+  });
+}
 
 function renderItems(city, data) {
   renderCurrentWeather(city, data.list[0], data.city.timezone);
@@ -60,13 +74,36 @@ function fetchCoords(search) {
       console.error(err);
     });
 }
-// todo: handle search submit (calls fetch coords)
 
-// todo: handle history click 
+const pastSearch = (city) => {
+  console.log(city);
+};
+
+// todo: handle search submit (calls fetch coords)
+var handleSearchSubmit = function (event) {
+  event.preventDefault();
+  var city = searchInput.value.trim();
+  if (city) {
+    renderCurrentWeather(city);
+    renderForecast(city);
+    cities.unshift({ city });
+    cityInputEl.value = "";
+  } else {
+    alert("Please enter a City");
+  }
+  saveSearch();
+  pastSearch(city);
+};
+
+var saveSearch = function () {
+  localStorage.setItem("cities", JSON.stringify(cities));
+};
+// todo: handle history click
+// historyButtonEl.addEventListener("click", handleSearchSubmit);
 
 // TODO: finish these functions
 searchForm.addEventListener("submit", handleSearchSubmit);
-searchHistoryContainer.addEventListener("click", handleHistoryClick);
+// searchHistoryContainer.addEventListener("click", handleHistoryClick);
 
 // function getInfo() {
 //   var newName = document.getElementById("cityInput");
